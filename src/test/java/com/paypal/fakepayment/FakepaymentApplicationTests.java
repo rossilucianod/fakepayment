@@ -1,34 +1,54 @@
 package com.paypal.fakepayment;
 
+import com.paypal.fakepayment.repository.AccountRepository;
+import com.paypal.fakepayment.repository.UserRepository;
+import com.paypal.fakepayment.service.PaymentSystemAccountManagerImpl;
+import com.paypal.fakepayment.service.PaymentSystemImpl;
+import com.paypal.fakepayment.service.PaymentSystemUserManagerImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.Mock;
+
+
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 class FakepaymentApplicationTests {
+
+	@Mock
+	private UserRepository userRepository;
+	@Mock
+	private AccountRepository accountRepository;
 
 	@Test
 	public void testHappyPath() throws PaymentSystemException {
 
-		PaymentSystem paymentSystem = new PaymentSystemImpl();
+		PaymentSystemAccountManager paymentSystemAccountManager = new PaymentSystemAccountManagerImpl(accountRepository, userRepository);
 
-		Assert.assertNull(paymentSystem.getAccountManager()
+		PaymentSystemUserManager paymentSystemUserManager = new PaymentSystemUserManagerImpl(userRepository);
+
+		PaymentSystem paymentSystem = new PaymentSystemImpl(paymentSystemAccountManager, paymentSystemUserManager);
+
+		Assertions.assertNull(paymentSystem.getAccountManager()
 				.findAccountsByFirstName(null));
-		Assert.assertNotNull(paymentSystem.getAccountManager()
+		Assertions.assertNotNull(paymentSystem.getAccountManager()
 				.findAccountsByFirstName(""));
-		Assert.assertFalse(paymentSystem.getAccountManager()
+		Assertions.assertFalse(paymentSystem.getAccountManager()
 				.findAccountsByFirstName("").hasNext());
-		Assert.assertNotNull(paymentSystem.getAccountManager()
+		Assertions.assertNotNull(paymentSystem.getAccountManager()
 				.findAccountsByLastName(""));
-		Assert.assertNull(paymentSystem.getAccountManager()
+		Assertions.assertNull(paymentSystem.getAccountManager()
 				.findAccountsByLastName(null));
-		Assert.assertFalse(paymentSystem.getAccountManager()
+		Assertions.assertFalse(paymentSystem.getAccountManager()
 				.findAccountsByLastName("").hasNext());
-		Assert.assertNotNull(paymentSystem.getAccountManager()
+		Assertions.assertNotNull(paymentSystem.getAccountManager()
 				.findAccountsByFullName("", ""));
-		Assert.assertNull(paymentSystem.getAccountManager()
+		Assertions.assertNull(paymentSystem.getAccountManager()
 				.findAccountsByFullName(null, ""));
-		Assert.assertNull(paymentSystem.getAccountManager()
+		Assertions.assertNull(paymentSystem.getAccountManager()
 				.findAccountsByFullName("", null));
-		Assert.assertFalse(paymentSystem.getAccountManager()
+		Assertions.assertFalse(paymentSystem.getAccountManager()
 				.findAccountsByFullName("", "").hasNext());
 
 		PaymentSystemUser user1 = paymentSystem.getUserManager().createUser(
@@ -47,12 +67,12 @@ class FakepaymentApplicationTests {
 		PaymentSystemAccount account3 = paymentSystem.getAccountManager()
 				.createAccount(user4, 0);
 
-		Assert.assertNotNull(account1);
-		Assert.assertNotNull(account2);
-		Assert.assertNotNull(account3);
-		Assert.assertEquals((double) 10, account1.getAccountBalance());
-		Assert.assertEquals((double) 0, account2.getAccountBalance());
-		Assert.assertEquals((double) 0, account3.getAccountBalance());
+		Assertions.assertNotNull(account1);
+		Assertions.assertNotNull(account2);
+		Assertions.assertNotNull(account3);
+		Assertions.assertEquals((double) 10, account1.getAccountBalance());
+		Assertions.assertEquals((double) 0, account2.getAccountBalance());
+		Assertions.assertEquals((double) 0, account3.getAccountBalance());
 
 		paymentSystem.getAccountManager().addUserToAccount(user2,
 				account1.getAccountNumber());
@@ -64,38 +84,38 @@ class FakepaymentApplicationTests {
 			numAccounts++;
 		}
 
-		Assert.assertEquals(3, numAccounts);
+		Assertions.assertEquals(3, numAccounts);
 
-		Assert.assertEquals(account1, paymentSystem.getAccountManager()
+		Assertions.assertEquals(account1, paymentSystem.getAccountManager()
 				.getUserAccount(user1));
-		Assert.assertEquals(account1, paymentSystem.getAccountManager()
+		Assertions.assertEquals(account1, paymentSystem.getAccountManager()
 				.getUserAccount(user2));
-		Assert.assertEquals(account2, paymentSystem.getAccountManager()
+		Assertions.assertEquals(account2, paymentSystem.getAccountManager()
 				.getUserAccount(user3));
-		Assert.assertEquals(account3, paymentSystem.getAccountManager()
+		Assertions.assertEquals(account3, paymentSystem.getAccountManager()
 				.getUserAccount(user4));
 
 		paymentSystem.sendMoney(user1, user3, 5);
 
-		Assert.assertEquals((double) 5, account1.getAccountBalance());
-		Assert.assertEquals((double) 5, account2.getAccountBalance());
-		Assert.assertEquals((double) 0, account3.getAccountBalance());
+		Assertions.assertEquals((double) 5, account1.getAccountBalance());
+		Assertions.assertEquals((double) 5, account2.getAccountBalance());
+		Assertions.assertEquals((double) 0, account3.getAccountBalance());
 
 		paymentSystem.sendMoney(user2, user3, 5);
 
-		Assert.assertEquals((double) 0, account1.getAccountBalance());
-		Assert.assertEquals((double) 10, account2.getAccountBalance());
-		Assert.assertEquals((double) 0, account3.getAccountBalance());
+		Assertions.assertEquals((double) 0, account1.getAccountBalance());
+		Assertions.assertEquals((double) 10, account2.getAccountBalance());
+		Assertions.assertEquals((double) 0, account3.getAccountBalance());
 
-		Set<PaymentSystemUser> to = new HashSet<PaymentSystemUser>();
+		Set<PaymentSystemUser> to = new HashSet<>();
 		to.add(user1);
 		to.add(user2);
 
 		paymentSystem.sendMoney(user3, to, 5);
 
-		Assert.assertEquals((double) 10, account1.getAccountBalance());
-		Assert.assertEquals((double) 0, account2.getAccountBalance());
-		Assert.assertEquals((double) 0, account3.getAccountBalance());
+		Assertions.assertEquals((double) 10, account1.getAccountBalance());
+		Assertions.assertEquals((double) 0, account2.getAccountBalance());
+		Assertions.assertEquals((double) 0, account3.getAccountBalance());
 
 		to.clear();
 		to.add(user3);
@@ -103,8 +123,8 @@ class FakepaymentApplicationTests {
 
 		paymentSystem.distributeMoney(user2, to, 10);
 
-		Assert.assertEquals((double) 0, account1.getAccountBalance());
-		Assert.assertEquals((double) 5, account2.getAccountBalance());
-		Assert.assertEquals((double) 5, account3.getAccountBalance());
+		Assertions.assertEquals((double) 0, account1.getAccountBalance());
+		Assertions.assertEquals((double) 5, account2.getAccountBalance());
+		Assertions.assertEquals((double) 5, account3.getAccountBalance());
 	}
 }
