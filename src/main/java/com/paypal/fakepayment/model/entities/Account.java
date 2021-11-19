@@ -9,7 +9,8 @@ public class Account {
     @Id
     private String accountNumber;
     private double accountBalance;
-    @OneToMany
+
+    @OneToMany (targetEntity = User.class, mappedBy = "account", fetch = FetchType.EAGER)
     private Set<User> accountUsers;
 
     public String getAccountNumber() {
@@ -27,6 +28,7 @@ public class Account {
     public void setAccountBalance(double accountBalance) {
         this.accountBalance = accountBalance;
     }
+
 
     public Set<User> getAccountUsers() {
         return accountUsers;

@@ -7,18 +7,20 @@ import com.paypal.fakepayment.service.PaymentSystemImpl;
 import com.paypal.fakepayment.service.PaymentSystemUserManagerImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+@DataJpaTest
 class FakepaymentApplicationTests {
 
-	@Mock
+	@Autowired
 	private UserRepository userRepository;
-	@Mock
+	@Autowired
 	private AccountRepository accountRepository;
 
 	@Test
@@ -28,7 +30,7 @@ class FakepaymentApplicationTests {
 
 		PaymentSystemUserManager paymentSystemUserManager = new PaymentSystemUserManagerImpl(userRepository);
 
-		PaymentSystem paymentSystem = new PaymentSystemImpl(paymentSystemAccountManager, paymentSystemUserManager);
+		PaymentSystem paymentSystem = new PaymentSystemImpl(paymentSystemAccountManager, paymentSystemUserManager, accountRepository, userRepository);
 
 		Assertions.assertNull(paymentSystem.getAccountManager()
 				.findAccountsByFirstName(null));
@@ -97,15 +99,31 @@ class FakepaymentApplicationTests {
 
 		paymentSystem.sendMoney(user1, user3, 5);
 
-		Assertions.assertEquals((double) 5, account1.getAccountBalance());
-		Assertions.assertEquals((double) 5, account2.getAccountBalance());
-		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+		// this doesn't work in this way because DTOs were planned to be immutables
+//		Assertions.assertEquals((double) 5, account1.getAccountBalance());
+//		Assertions.assertEquals((double) 5, account2.getAccountBalance());
+//		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+
+		Assertions.assertEquals((double) 5, paymentSystem.getAccountManager()
+				.getUserAccount(user1).getAccountBalance());
+		Assertions.assertEquals((double) 5, paymentSystem.getAccountManager()
+				.getUserAccount(user3).getAccountBalance());
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user4).getAccountBalance());
 
 		paymentSystem.sendMoney(user2, user3, 5);
 
-		Assertions.assertEquals((double) 0, account1.getAccountBalance());
-		Assertions.assertEquals((double) 10, account2.getAccountBalance());
-		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+		// this doesn't work in this way because DTOs were planned to be immutables
+//		Assertions.assertEquals((double) 0, account1.getAccountBalance());
+//		Assertions.assertEquals((double) 10, account2.getAccountBalance());
+//		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user2).getAccountBalance());
+		Assertions.assertEquals((double) 10, paymentSystem.getAccountManager()
+				.getUserAccount(user3).getAccountBalance());
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user4).getAccountBalance());
 
 		Set<PaymentSystemUser> to = new HashSet<>();
 		to.add(user1);
@@ -113,9 +131,17 @@ class FakepaymentApplicationTests {
 
 		paymentSystem.sendMoney(user3, to, 5);
 
-		Assertions.assertEquals((double) 10, account1.getAccountBalance());
-		Assertions.assertEquals((double) 0, account2.getAccountBalance());
-		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+		// this doesn't work in this way because DTOs were planned to be immutables
+//		Assertions.assertEquals((double) 10, account1.getAccountBalance());
+//		Assertions.assertEquals((double) 0, account2.getAccountBalance());
+//		Assertions.assertEquals((double) 0, account3.getAccountBalance());
+
+		Assertions.assertEquals((double) 10, paymentSystem.getAccountManager()
+				.getUserAccount(user2).getAccountBalance());
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user3).getAccountBalance());
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user4).getAccountBalance());
 
 		to.clear();
 		to.add(user3);
@@ -123,8 +149,20 @@ class FakepaymentApplicationTests {
 
 		paymentSystem.distributeMoney(user2, to, 10);
 
-		Assertions.assertEquals((double) 0, account1.getAccountBalance());
-		Assertions.assertEquals((double) 5, account2.getAccountBalance());
-		Assertions.assertEquals((double) 5, account3.getAccountBalance());
+		// this doesn't work in this way because DTOs were planned to be immutables
+//		Assertions.assertEquals((double) 0, account1.getAccountBalance());
+//		Assertions.assertEquals((double) 5, account2.getAccountBalance());
+//		Assertions.assertEquals((double) 5, account3.getAccountBalance());
+
+		Assertions.assertEquals((double) 0, paymentSystem.getAccountManager()
+				.getUserAccount(user2).getAccountBalance());
+		Assertions.assertEquals((double) 5, paymentSystem.getAccountManager()
+				.getUserAccount(user3).getAccountBalance());
+		Assertions.assertEquals((double) 5, paymentSystem.getAccountManager()
+				.getUserAccount(user4).getAccountBalance());
+
+
+
 	}
+
 }

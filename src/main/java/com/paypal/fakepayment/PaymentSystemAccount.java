@@ -13,4 +13,5 @@ public interface PaymentSystemAccount {
 	void decrementAccountBalance(Double amount) throws PaymentSystemException;
 
 	Iterator<PaymentSystemUser> getAccountUsers();
+
 }

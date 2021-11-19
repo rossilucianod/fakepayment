@@ -3,6 +3,8 @@ package com.paypal.fakepayment.model.dto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.paypal.fakepayment.PaymentSystemUser;
 
+import java.util.Objects;
+
 @JsonDeserialize(builder = UserDto.Builder.class)
 public class UserDto implements PaymentSystemUser {
 
@@ -21,6 +23,9 @@ public class UserDto implements PaymentSystemUser {
         this.accountDto = accountDto;
     }
 
+    public AccountDto getAccountDto() {
+        return accountDto;
+    }
 
     @Override
     public String getFirstName() {
@@ -35,6 +40,19 @@ public class UserDto implements PaymentSystemUser {
     @Override
     public String getEmailAddress() {
         return emailAddress;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserDto userDto = (UserDto) o;
+        return Objects.equals(firstName, userDto.firstName) && Objects.equals(lastName, userDto.lastName) && Objects.equals(emailAddress, userDto.emailAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, emailAddress);
     }
 
     public static class Builder {

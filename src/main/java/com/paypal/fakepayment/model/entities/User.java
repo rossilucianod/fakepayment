@@ -1,8 +1,6 @@
 package com.paypal.fakepayment.model.entities;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class User {
@@ -10,10 +8,11 @@ public class User {
     private String emailAddress;
     private String firstName;
     private String lastName;
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "accountNumber")
     private Account account;
 
-    public Account getAccount() {
+        public Account getAccount() {
         return account;
     }
 
