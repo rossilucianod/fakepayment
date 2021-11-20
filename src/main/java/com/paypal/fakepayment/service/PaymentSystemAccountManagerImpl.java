@@ -56,7 +56,7 @@ public class PaymentSystemAccountManagerImpl implements PaymentSystemAccountMana
             existingUser.setAccount(existingAccount);
             userRepository.save(existingUser);
 
-            return  buildAccountDtoFromEntity(existingAccount);
+            return buildAccountDtoFromEntity(existingAccount);
 
         } catch(DataAccessException e) {
             throw new PaymentSystemException("There was an error adding a user to an account", e);

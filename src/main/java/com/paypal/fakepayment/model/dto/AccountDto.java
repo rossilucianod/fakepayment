@@ -1,5 +1,6 @@
 package com.paypal.fakepayment.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.paypal.fakepayment.PaymentSystemAccount;
 import com.paypal.fakepayment.PaymentSystemException;
@@ -13,6 +14,7 @@ import java.util.Set;
 public class AccountDto implements PaymentSystemAccount {
     private final String accountNumber;
     private double accountBalance;
+    @JsonIgnore
     private final Set<PaymentSystemUser> accountUsers;
 
     private AccountDto(
@@ -42,7 +44,6 @@ public class AccountDto implements PaymentSystemAccount {
         }
 
         this.accountBalance += amount;
-
     }
 
     @Override

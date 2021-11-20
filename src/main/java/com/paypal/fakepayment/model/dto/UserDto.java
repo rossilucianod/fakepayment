@@ -11,7 +11,7 @@ public class UserDto implements PaymentSystemUser {
     private final String firstName;
     private final String lastName;
     private final String emailAddress;
-    private final AccountDto accountDto;
+    private final AccountDto account;
 
     private UserDto(String firstName,
                     String lastName,
@@ -20,11 +20,11 @@ public class UserDto implements PaymentSystemUser {
         this.firstName = firstName;
         this.lastName = lastName;
         this.emailAddress = emailAddress;
-        this.accountDto = accountDto;
+        this.account = accountDto;
     }
 
-    public AccountDto getAccountDto() {
-        return accountDto;
+    public AccountDto getAccount() {
+        return account;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class UserDto implements PaymentSystemUser {
             this.emailAddress = emailAddress;
             return this;
         }
-        public Builder withAccountDto(AccountDto accountDto){
+        public Builder withAccount(AccountDto accountDto){
             this.accountDto = accountDto;
             return this;
         }
